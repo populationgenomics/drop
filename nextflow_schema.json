@@ -554,6 +554,69 @@
                     "type": "string",
                     "description": "analysis-runner GUID, injected by the server; used in resource labels.",
                     "fa_icon": "fas fa-fingerprint"
+                },
+                "cpg_max_cohort_size": {
+                    "type": "integer",
+                    "default": 125,
+                    "minimum": 1,
+                    "description": "Sample count assumed by a cohort stage that can't see its DROP group's size (Google Batch, conf/cpg.config). Normally unused: cohort stages scale with the actual group size.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_storage_per_bam_gb": {
+                    "type": "integer",
+                    "default": 40,
+                    "minimum": 1,
+                    "description": "Disk per sample BAM (GB). Added once to per-sample stages, and once per BAM to cohort stages that take every BAM.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_sample_disk_base_gb": {
+                    "type": "integer",
+                    "default": 20,
+                    "minimum": 1,
+                    "description": "Base disk (GB) for per-sample stages.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_sample_cpus": {
+                    "type": "integer",
+                    "default": 4,
+                    "minimum": 1,
+                    "description": "CPUs for per-sample stages.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_sample_memory_gb": {
+                    "type": "integer",
+                    "default": 16,
+                    "minimum": 1,
+                    "description": "Memory (GB) for per-sample stages.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_sample_time_h": {
+                    "type": "integer",
+                    "default": 8,
+                    "minimum": 1,
+                    "description": "Time limit (hours) for per-sample stages.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_cohort_disk_base_gb": {
+                    "type": "integer",
+                    "default": 50,
+                    "minimum": 1,
+                    "description": "Base disk (GB) for cohort stages.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_cohort_storage_per_sample_gb": {
+                    "type": "integer",
+                    "default": 2,
+                    "minimum": 1,
+                    "description": "Disk per sample (GB) for cohort stages that work on counts and models, not BAMs. Cohort disk = cpg_cohort_disk_base_gb + this x samples in the DROP group.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_cohort_time_h": {
+                    "type": "integer",
+                    "default": 24,
+                    "minimum": 1,
+                    "description": "Time limit (hours) for cohort stages.",
+                    "fa_icon": "fas fa-server"
                 }
             }
         },
