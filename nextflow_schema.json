@@ -617,6 +617,26 @@
                     "minimum": 1,
                     "description": "Time limit (hours) for cohort stages.",
                     "fa_icon": "fas fa-server"
+                },
+                "cpg_cohort_cpus_floor": {
+                    "type": "integer",
+                    "default": 2,
+                    "minimum": 1,
+                    "description": "Fewest CPUs a cohort stage gets, however small the DROP group (unless its cpg_cohort_reference value is lower).",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_cohort_memory_floor_gb": {
+                    "type": "integer",
+                    "default": 8,
+                    "minimum": 1,
+                    "description": "Least memory (GB) a cohort stage gets, however small the DROP group (unless its cpg_cohort_reference value is lower).",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_cohort_reference": {
+                    "type": "object",
+                    "description": "Each cohort stage's [CPUs, memory GB] at cpg_max_cohort_size samples, keyed by process name. Cohort stages scale linearly from it. Defaults are DROP's conf/modules.config values. Overriding it replaces the whole table.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-table"
                 }
             }
         },
