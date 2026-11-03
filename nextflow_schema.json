@@ -559,7 +559,7 @@
                     "type": "integer",
                     "default": 125,
                     "minimum": 1,
-                    "description": "Sample count assumed by a cohort stage that can't see its DROP group's size (Google Batch, conf/cpg.config). Normally unused: cohort stages scale with the actual group size.",
+                    "description": "Reference size for cohort scaling (Google Batch, conf/cpg.config): cpg_cohort_reference gives each cohort stage's CPUs and memory at this many samples, and stages scale linearly from it with their DROP group's actual size.",
                     "fa_icon": "fas fa-server"
                 },
                 "cpg_storage_per_bam_gb": {
