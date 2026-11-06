@@ -82,15 +82,17 @@ workflow DROP {
         indexed: true
     }
 
+    // join() of two value channels gives a one-item queue, which would let only the first CRAM run;
+    // first() makes it a value channel again, reused by every CRAM
     SAMTOOLS_CONVERT_UCSC(
         bams_branch.cram_ucsc,
-        ucsc_fasta.join(ucsc_fai),
+        ucsc_fasta.join(ucsc_fai).first(),
     )
     def ch_ucsc_converted_bams = SAMTOOLS_CONVERT_UCSC.out.bam.join(SAMTOOLS_CONVERT_UCSC.out.bai, failOnDuplicate:true, failOnMismatch:true)
 
     SAMTOOLS_CONVERT_NCBI(
         bams_branch.cram_ncbi,
-        ncbi_fasta.join(ncbi_fai),
+        ncbi_fasta.join(ncbi_fai).first(),
     )
     def ch_ncbi_converted_bams = SAMTOOLS_CONVERT_NCBI.out.bam.join(SAMTOOLS_CONVERT_NCBI.out.bai, failOnDuplicate:true, failOnMismatch:true)
 

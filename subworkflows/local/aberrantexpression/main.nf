@@ -2,6 +2,7 @@ include { GENECOUNTS_COUNTREADS              } from '../../../modules/local/gene
 include { GENECOUNTS_MERGECOUNTS             } from '../../../modules/local/genecounts/mergecounts/'
 include { GENECOUNTS_EXPORTCOUNTS            } from '../../../modules/local/genecounts/exportcounts/'
 include { GENECOUNTS_FILTERCOUNTS            } from '../../../modules/local/genecounts/filtercounts/'
+include { GENECOUNTS_TPM                     } from '../../../modules/local/genecounts/tpm/'
 include { GENECOUNTS_SUMMARY                 } from '../../../modules/local/genecounts/summary/'
 include { OUTRIDER_FIT                       } from '../../../modules/local/outrider/fit'
 include { OUTRIDER_PVALS                     } from '../../../modules/local/outrider/pvals'
@@ -119,6 +120,12 @@ workflow ABERRANTEXPRESSION {
         GENECOUNTS_MERGECOUNTS.out.output
     )
     ch_versions = ch_versions.mix(GENECOUNTS_EXPORTCOUNTS.out.versions.first())
+
+    // CPG: TPM for seqr, from the unfiltered merged counts
+    GENECOUNTS_TPM(
+        GENECOUNTS_MERGECOUNTS.out.output
+    )
+    ch_versions = ch_versions.mix(GENECOUNTS_TPM.out.versions.first())
 
     //
     // Filter the merged counts
@@ -359,6 +366,7 @@ workflow ABERRANTEXPRESSION {
     emit:
     versions  = ch_versions
     results   = OUTRIDER_RESULTS.out.results
+    tpm       = GENECOUNTS_TPM.out.tpm
     count_report = STRIP_NAV_GENECOUNTS.out.report.toList()
     outrider_report = STRIP_NAV_OUTRIDER.out.report.toList()
 }
