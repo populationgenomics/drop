@@ -585,7 +585,7 @@
                 },
                 "cpg_sample_memory_gb": {
                     "type": "integer",
-                    "default": 16,
+                    "default": 32,
                     "minimum": 1,
                     "description": "Memory (GB) for per-sample stages.",
                     "fa_icon": "fas fa-server"
