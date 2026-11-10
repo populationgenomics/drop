@@ -597,6 +597,27 @@
                     "description": "Time limit (hours) for per-sample stages.",
                     "fa_icon": "fas fa-server"
                 },
+                "cpg_genecounts_cpus": {
+                    "type": "integer",
+                    "default": 4,
+                    "minimum": 1,
+                    "description": "CPUs for gene counting (GENECOUNTS_COUNTREADS): one worker per CPU, each counting one chromosome at a time.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_genecounts_memory_gb": {
+                    "type": "integer",
+                    "default": 56,
+                    "minimum": 1,
+                    "description": "Memory (GB) for gene counting; each worker holds a whole chromosome of alignments, so allow plenty per CPU.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_genecounts_time_h": {
+                    "type": "integer",
+                    "default": 16,
+                    "minimum": 1,
+                    "description": "Time limit (hours) for gene counting.",
+                    "fa_icon": "fas fa-server"
+                },
                 "cpg_cohort_disk_base_gb": {
                     "type": "integer",
                     "default": 50,
