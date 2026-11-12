@@ -529,4 +529,5 @@ workflow ABERRANTSPLICING {
     versions = ch_versions
     count_report = STRIP_NAV_SPLICECOUNTS.out.report.toList()
     fraser_report = STRIP_NAV_FRASER.out.report.toList()
+    results_junctions = FRASER_EXTRACTRESULTS.out.results_junctions // CPG: for the seqr export
 }

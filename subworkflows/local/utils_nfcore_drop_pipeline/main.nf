@@ -97,16 +97,20 @@ workflow PIPELINE_INITIALISATION {
     validateInputParameters()
 
     //
-    // Create channel from gene annotations provided through params.gene_annotation
+    // Create channel from gene annotations provided through params.gene_annotation,
+    // or (CPG) a single GTF given directly with params.gtf / params.gtf_name
     //
 
-    def gene_annotation_list = params.gene_annotation
-        ? samplesheetToList(params.gene_annotation, "assets/schema_gene_annotation.json")
-        : []
+    def gene_annotation_list = []
+    if (params.gtf) {
+        gene_annotation_list = [[[id: params.gtf_name], file(params.gtf, checkIfExists: true)]]
+    } else if (params.gene_annotation) {
+        gene_annotation_list = samplesheetToList(params.gene_annotation, "assets/schema_gene_annotation.json")
+    }
 
     def all_gene_annotations = gene_annotation_list.collect { entry -> entry[0].id }.sort().toSet()
 
-    def ch_gene_annotation = params.gene_annotation
+    def ch_gene_annotation = gene_annotation_list
         ? channel.fromList(gene_annotation_list)
         : channel.empty()
 
@@ -233,8 +237,11 @@ workflow PIPELINE_COMPLETION {
 def validateInputParameters() {
     genomeExistsError()
 
-    if ((!params.ae_skip) && params.gene_annotation == null) {
-        error("Please provide a gene annotation file using the --gene_annotation parameter when running the aberrant expression analysis.")
+    if (params.gtf && params.gene_annotation) {
+        error("Please provide either --gtf or --gene_annotation, not both.")
+    }
+    if ((!params.ae_skip) && params.gene_annotation == null && !params.gtf) {
+        error("Please provide a gene annotation file using the --gene_annotation (or --gtf) parameter when running the aberrant expression analysis.")
     }
 }
 

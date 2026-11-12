@@ -13,6 +13,7 @@ include { PREPROCESSGENEANNOTATION                  } from '../modules/local/pre
 include { ABERRANTEXPRESSION                        } from '../subworkflows/local/aberrantexpression/main'
 include { ABERRANTSPLICING                          } from '../subworkflows/local/aberrantsplicing/main'
 include { MAE                                       } from '../subworkflows/local/mae/main'
+include { EXPORT_SEQR                               } from '../modules/local/export_seqr/main'
 
 include { paramsSummaryMap                          } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc                      } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -82,15 +83,17 @@ workflow DROP {
         indexed: true
     }
 
+    // join() of two value channels gives a one-item queue, which would let only the first CRAM run;
+    // first() makes it a value channel again, reused by every CRAM
     SAMTOOLS_CONVERT_UCSC(
         bams_branch.cram_ucsc,
-        ucsc_fasta.join(ucsc_fai),
+        ucsc_fasta.join(ucsc_fai).first(),
     )
     def ch_ucsc_converted_bams = SAMTOOLS_CONVERT_UCSC.out.bam.join(SAMTOOLS_CONVERT_UCSC.out.bai, failOnDuplicate:true, failOnMismatch:true)
 
     SAMTOOLS_CONVERT_NCBI(
         bams_branch.cram_ncbi,
-        ncbi_fasta.join(ncbi_fai),
+        ncbi_fasta.join(ncbi_fai).first(),
     )
     def ch_ncbi_converted_bams = SAMTOOLS_CONVERT_NCBI.out.bam.join(SAMTOOLS_CONVERT_NCBI.out.bai, failOnDuplicate:true, failOnMismatch:true)
 
@@ -183,6 +186,39 @@ workflow DROP {
         ch_versions = ch_versions.mix(ABERRANTSPLICING.out.versions)
         ch_multiqc_files = ch_multiqc_files.mix(ABERRANTSPLICING.out.count_report)
         ch_multiqc_files = ch_multiqc_files.mix(ABERRANTSPLICING.out.fraser_report)
+    }
+
+    //
+    // CPG: seqr export, when a Metamist SG map is given (prepare.nf's sg_map.tsv)
+    //
+
+    if (params.sg_map) {
+        // keyed on [annotation, DROP group]; a task gets whichever of the three tables ran
+        def ch_outrider = ae_skip ? channel.empty() : ABERRANTEXPRESSION.out.results
+            .map { meta, tsv -> [ [meta.id, meta.drop_group], tsv ] }
+        def ch_tpm = ae_skip ? channel.empty() : ABERRANTEXPRESSION.out.tpm
+            .map { meta, tsv -> [ [meta.id, meta.drop_group], tsv ] }
+        def ch_fraser = as_skip ? channel.empty() : ABERRANTSPLICING.out.results_junctions
+            .map { meta, tsv -> [ [meta.annotation, meta.drop_group], tsv ] }
+
+        def ch_export_input = ch_outrider
+            .join(ch_tpm, remainder: true)
+            .join(ch_fraser, remainder: true)
+            .map { key, outrider, tpm, fraser ->
+                def meta = [ id: "${key[1]}.${key[0]}", annotation: key[0], drop_group: key[1] ]
+                [ [id: key[0]], meta, outrider ?: [], fraser ?: [], tpm ?: [] ]
+            }
+            .combine(PREPROCESSGENEANNOTATION.out.gene_name_mapping, by: 0)
+            .map { _annotation, meta, outrider, fraser, tpm, gene_name_mapping ->
+                [ meta, outrider, fraser, tpm, gene_name_mapping ]
+            }
+
+        EXPORT_SEQR(
+            ch_export_input,
+            file(params.sg_map, checkIfExists: true),
+            params.seqr_gene_ids ? file(params.seqr_gene_ids, checkIfExists: true) : [],
+            params.cohort ?: 'cohort'
+        )
     }
 
     //

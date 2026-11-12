@@ -499,6 +499,193 @@
                 }
             }
         },
+        "cpg_options": {
+            "title": "CPG options",
+            "type": "object",
+            "fa_icon": "fas fa-dna",
+            "description": "Metamist sample sheet (prepare.nf), single-GTF annotation, and analysis-runner launch options.",
+            "properties": {
+                "cohort": {
+                    "type": "string",
+                    "pattern": "^COH\\d+$",
+                    "description": "Metamist cohort ID. prepare.nf builds the sample sheet for it; main.nf uses it in seqr export file names.",
+                    "fa_icon": "fas fa-users"
+                },
+                "seqr_data_type": {
+                    "type": "string",
+                    "default": "exome",
+                    "enum": ["exome", "genome"],
+                    "description": "Which seqr project the RNA attaches to: the Metamist project meta key seqr-project-<type>.",
+                    "fa_icon": "fas fa-project-diagram"
+                },
+                "cpg_container": {
+                    "type": "string",
+                    "default": "australia-southeast1-docker.pkg.dev/cpg-common/images/nf_base:5.8.1-1",
+                    "description": "Container with metamist and cpg_utils, for the sample sheet step.",
+                    "fa_icon": "fab fa-docker"
+                },
+                "gtf": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "pattern": "^\\S+\\.gtf(\\.gz)?$",
+                    "description": "A single GTF to annotate with, instead of a --gene_annotation YAML. gs:// paths are staged onto the task VM at runtime.",
+                    "fa_icon": "far fa-file-code"
+                },
+                "gtf_name": {
+                    "type": "string",
+                    "default": "ensembl105",
+                    "pattern": "^\\S+$",
+                    "description": "Name of the --gtf annotation, used in output paths.",
+                    "fa_icon": "fas fa-tag"
+                },
+                "sg_map": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "prepare.nf's sg_map.tsv. When set, DROP's results are exported as seqr RNA-seq upload files into <outdir>/seqr_export/.",
+                    "fa_icon": "fas fa-map"
+                },
+                "seqr_gene_ids": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "seqr's gene IDs, one per line. The export fails if any exported gene ID is missing from it, as seqr would reject the file. Unset skips the check.",
+                    "fa_icon": "fas fa-list"
+                },
+                "seqr_project_override": {
+                    "type": "string",
+                    "description": "Testing: report this seqr project GUID for every dataset, instead of the one in its Metamist project meta. Files are still split per dataset.",
+                    "fa_icon": "fas fa-project-diagram"
+                },
+                "ignore_exome_check": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Testing: export SGs whose participant has no exome SG (and so isn't in a seqr exome project).",
+                    "fa_icon": "fas fa-flask"
+                },
+                "dataset": {
+                    "type": "string",
+                    "description": "analysis-runner dataset, used in resource labels.",
+                    "fa_icon": "fas fa-database"
+                },
+                "accessLevel": {
+                    "type": "string",
+                    "enum": ["test", "standard", "full"],
+                    "description": "analysis-runner access level of the launch.",
+                    "fa_icon": "fas fa-key"
+                },
+                "arGuid": {
+                    "type": "string",
+                    "description": "analysis-runner GUID, injected by the server; used in resource labels.",
+                    "fa_icon": "fas fa-fingerprint"
+                },
+                "cpg_max_cohort_size": {
+                    "type": "integer",
+                    "default": 125,
+                    "minimum": 1,
+                    "description": "Reference size for cohort scaling (Google Batch, conf/cpg.config): cpg_cohort_reference gives each cohort stage's CPUs and memory at this many samples, and stages scale linearly from it with their DROP group's actual size.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_storage_per_bam_gb": {
+                    "type": "integer",
+                    "default": 40,
+                    "minimum": 1,
+                    "description": "Disk per sample BAM (GB). Added once to per-sample stages, and once per BAM to cohort stages that take every BAM.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_sample_disk_base_gb": {
+                    "type": "integer",
+                    "default": 20,
+                    "minimum": 1,
+                    "description": "Base disk (GB) for per-sample stages.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_sample_cpus": {
+                    "type": "integer",
+                    "default": 4,
+                    "minimum": 1,
+                    "description": "CPUs for per-sample stages.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_sample_memory_gb": {
+                    "type": "integer",
+                    "default": 32,
+                    "minimum": 1,
+                    "description": "Memory (GB) for per-sample stages.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_sample_time_h": {
+                    "type": "number",
+                    "default": 8,
+                    "minimum": 0.05,
+                    "description": "Time limit (hours) for per-sample stages. Decimals allowed, e.g. 0.083 for 5 minutes.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_genecounts_cpus": {
+                    "type": "integer",
+                    "default": 4,
+                    "minimum": 1,
+                    "description": "CPUs for gene counting (GENECOUNTS_COUNTREADS): one worker per CPU, each counting one chromosome at a time.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_genecounts_memory_gb": {
+                    "type": "integer",
+                    "default": 56,
+                    "minimum": 1,
+                    "description": "Memory (GB) for gene counting; each worker holds a whole chromosome of alignments, so allow plenty per CPU.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_genecounts_time_h": {
+                    "type": "number",
+                    "default": 16,
+                    "minimum": 0.05,
+                    "description": "Time limit (hours) for gene counting. Decimals allowed, e.g. 0.083 for 5 minutes.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_cohort_disk_base_gb": {
+                    "type": "integer",
+                    "default": 50,
+                    "minimum": 1,
+                    "description": "Base disk (GB) for cohort stages.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_cohort_storage_per_sample_gb": {
+                    "type": "integer",
+                    "default": 2,
+                    "minimum": 1,
+                    "description": "Disk per sample (GB) for cohort stages that work on counts and models, not BAMs. Cohort disk = cpg_cohort_disk_base_gb + this x samples in the DROP group.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_cohort_time_h": {
+                    "type": "number",
+                    "default": 24,
+                    "minimum": 0.05,
+                    "description": "Time limit (hours) for cohort stages. Decimals allowed, e.g. 0.083 for 5 minutes.",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_cohort_cpus_floor": {
+                    "type": "integer",
+                    "default": 2,
+                    "minimum": 1,
+                    "description": "Fewest CPUs a cohort stage gets, however small the DROP group (unless its cpg_cohort_reference value is lower).",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_cohort_memory_floor_gb": {
+                    "type": "integer",
+                    "default": 8,
+                    "minimum": 1,
+                    "description": "Least memory (GB) a cohort stage gets, however small the DROP group (unless its cpg_cohort_reference value is lower).",
+                    "fa_icon": "fas fa-server"
+                },
+                "cpg_cohort_reference": {
+                    "type": "object",
+                    "description": "Each cohort stage's [CPUs, memory GB] at cpg_max_cohort_size samples, keyed by process name. Cohort stages scale linearly from it. Defaults are DROP's conf/modules.config values. Overriding it replaces the whole table.",
+                    "hidden": true,
+                    "fa_icon": "fas fa-table"
+                }
+            }
+        },
         "generic_options": {
             "title": "Generic options",
             "type": "object",
@@ -644,6 +831,9 @@
         },
         {
             "$ref": "#/$defs/institutional_config_options"
+        },
+        {
+            "$ref": "#/$defs/cpg_options"
         },
         {
             "$ref": "#/$defs/generic_options"
