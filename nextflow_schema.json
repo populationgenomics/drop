@@ -539,6 +539,31 @@
                     "description": "Name of the --gtf annotation, used in output paths.",
                     "fa_icon": "fas fa-tag"
                 },
+                "sg_map": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "prepare.nf's sg_map.tsv. When set, DROP's results are exported as seqr RNA-seq upload files into <outdir>/seqr_export/.",
+                    "fa_icon": "fas fa-map"
+                },
+                "seqr_gene_ids": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "seqr's gene IDs, one per line. The export fails if any exported gene ID is missing from it, as seqr would reject the file. Unset skips the check.",
+                    "fa_icon": "fas fa-list"
+                },
+                "seqr_project_override": {
+                    "type": "string",
+                    "description": "Testing: report this seqr project GUID for every dataset, instead of the one in its Metamist project meta. Files are still split per dataset.",
+                    "fa_icon": "fas fa-project-diagram"
+                },
+                "ignore_exome_check": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Testing: export SGs whose participant has no exome SG (and so isn't in a seqr exome project).",
+                    "fa_icon": "fas fa-flask"
+                },
                 "dataset": {
                     "type": "string",
                     "description": "analysis-runner dataset, used in resource labels.",
