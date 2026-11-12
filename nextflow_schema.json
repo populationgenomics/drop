@@ -591,10 +591,10 @@
                     "fa_icon": "fas fa-server"
                 },
                 "cpg_sample_time_h": {
-                    "type": "integer",
+                    "type": "number",
                     "default": 8,
-                    "minimum": 1,
-                    "description": "Time limit (hours) for per-sample stages.",
+                    "minimum": 0.05,
+                    "description": "Time limit (hours) for per-sample stages. Decimals allowed, e.g. 0.083 for 5 minutes.",
                     "fa_icon": "fas fa-server"
                 },
                 "cpg_genecounts_cpus": {
@@ -612,10 +612,10 @@
                     "fa_icon": "fas fa-server"
                 },
                 "cpg_genecounts_time_h": {
-                    "type": "integer",
+                    "type": "number",
                     "default": 16,
-                    "minimum": 1,
-                    "description": "Time limit (hours) for gene counting.",
+                    "minimum": 0.05,
+                    "description": "Time limit (hours) for gene counting. Decimals allowed, e.g. 0.083 for 5 minutes.",
                     "fa_icon": "fas fa-server"
                 },
                 "cpg_cohort_disk_base_gb": {
@@ -633,10 +633,10 @@
                     "fa_icon": "fas fa-server"
                 },
                 "cpg_cohort_time_h": {
-                    "type": "integer",
+                    "type": "number",
                     "default": 24,
-                    "minimum": 1,
-                    "description": "Time limit (hours) for cohort stages.",
+                    "minimum": 0.05,
+                    "description": "Time limit (hours) for cohort stages. Decimals allowed, e.g. 0.083 for 5 minutes.",
                     "fa_icon": "fas fa-server"
                 },
                 "cpg_cohort_cpus_floor": {
